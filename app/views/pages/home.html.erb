@@ -1,2 +1,8 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<div id="restaurantjsx"
+  data-restaurant=<%= Restaurant.all.to_json %>
+  ></div>
+
+
+
+<%= javascript_pack_tag "checkres" %>
+
