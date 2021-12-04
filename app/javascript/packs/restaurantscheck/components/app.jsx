@@ -11,7 +11,6 @@ const App = (props) => {
         <img className="messaging-logo" src={logo} />
       </div>
       <RestaurantList selectedChannel={props.match.params.restaurant}/>
-      <CommentList selectedChannel={props.match.params.comment} />
     </div>
   )
 };

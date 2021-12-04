@@ -1,39 +1,43 @@
-import React from "react";
-import {Link} from "react-router-dom";
-import {bindActionCreators} from "redux";
-import {connect} from "react-redux";
-import {selectRestaurant, fetchUser} from "../actions/index.js";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import { fetchRestaurants } from './actions/restaurants_actions';
 
 class RestaurantList extends Component {
-  handleClick = (restaurant) => {
-    this.props.selectRestaurant();
-    this.props.fetchComments(restaurant);
-    this.props.fetchUser(restaurant);
+  componentWillMount() {
+    this.props.fetchRestaurants();
   }
 
-  renderRestaurant = (restaurant) => {
-    return (
-      <li
-        key={restaurant.id}
-        className={restaurant.id === this.props.selectedRestaurant.id ? "active" : null}
-        onClick={() => this.handleClick(restaurant)}>
-        <Link 
-          to={`/restaurants/${restaurant.id}`}>
-          #{restaurant.id}
+  renderRestaurants() {
+    return this.props.restaurants.map((restaurant) => {
+      return (
+        <Link to={`/restaurants/${restaurant.id}`} key={restaurant.id}>
+          <li className="restaurant-item">
+            <h3>{restaurant.name}</h3>
+            <p>{restaurant.address}</p>
+          </li>
         </Link>
-      </li>
-    )
+      );
+    });
   }
 
   render() {
     return (
-      <div className="restaurant-list">
-        <span>Restaurant List</span>
-        <ul>
-          {this.props.restaurants.map(this.renderRestaurant)}
+      <div>
+        <div className="first-row">
+          <h3>Restaurants</h3>
+          <Link to="/restaurants/new" className="btn btn-primary">
+            Add Restaurant
+          </Link>
+        </div>
+        <h3>Restaurants</h3>
+        <ul className="list-group">
+          {this.renderRestaurants()}
         </ul>
       </div>
-    )
+    );
   }
 }
 
@@ -46,9 +50,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
-    selectRestaurant: selectRestaurant,
-    fetchComments: fetchComments,
-    fetchUser: fetchUser
+    fetchRestaurants
   }, dispatch);
 }
 
