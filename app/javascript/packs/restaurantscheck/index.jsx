@@ -1,43 +1,39 @@
-// Run this example by adding <%= javascript_pack_tag 'hello_react' %> to the head of your layout file,
-// like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
-// of the page.
-
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
+import reduxPromise from 'redux-promise';
 import logger from 'redux-logger';
-import ReduxPromise from 'redux-promise';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { createHistory as history } from 'history';
+import { reducer as formReducer } from 'redux-form';
 
-import App from './components/app';
-import commentsReducer from './reducers/comments_reducer';
+import RestaurantList from './components/restaurant_list';
+import RestaurantShow from './components/restaurant_show';
+import RestaurantCreate from './components/restaurant_create';
 
-const restaurantContainer = document.getElementById('restaurantjsx');
+import './assets/stylesheets/application.scss';
+import restaurantsReducer from './reducers/restaurants_reducer';
 
-const initialState = {
-  comments: [],
-  restaurants: JSON.parse(restaurantContainer.dataset.restaurants).map(c => c.id),
-}
 
 const reducers = combineReducers({
-  comments: commentsReducer,
-  restaurants: (state = null, action) => state
+  restaurants: restaurantsReducer,
+  form: formReducer
 });
 
-const middlewares = applyMiddleware(logger, ReduxPromise);
-const store = createStore(reducers, initialState, middlewares);
+const middlewares = applyMiddleware(reduxPromise, logger);
 
-//render an instance of the component in the DOOM
 ReactDOM.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <Switch>
-        <Route path="/" component={App} />
-        <Route path="/restaurants/new" component={App} />
-        <Route path="/restaurants/:id" component={App} />
-      </Switch>
-    </BrowserRouter>
+  <Provider store={createStore(reducers, {}, middlewares)}>
+    <Router history={history}>
+      <div className="thin-container">
+        <Switch>
+          <Route path="/" exact component={RestaurantList} />
+          <Route path="/restaurants/new" exact component={RestaurantCreate} />
+          <Route path="/restaurants/:id" exact component={RestaurantShow} />
+        </Switch>
+      </div>
+    </Router>
   </Provider>,
-  restaurantContainer
+  document.getElementById('root')
 );
